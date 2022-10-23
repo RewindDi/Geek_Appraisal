@@ -2,11 +2,12 @@
 void Euler(double a)
 {
 	double n = 0.001;
+	double h = 0.001; 
 	while (1)
 	{
 	    double b = 0.999 * a;
 		printf("%lf      %lf\n", n, b);
-		if(a-b<0.000001)
+		if(a-b<0.001*h)
 		{
 			break;
 		}
