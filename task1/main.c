@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<math.h> 
 void Euler(double a)
 {
 	double n = 0.001;
@@ -18,8 +19,11 @@ void Euler(double a)
 }
 int main()
 {
-	int a;
-	scanf("%d", &a);
+	double a;
+	scanf("%lf", &a);
+	//a=exp(1)*a;
+	//a=acos(-1.0)*a;
+	printf("%lf\n",a);
 	printf("       x       y\n");
 	Euler(a);
 	return 0;
