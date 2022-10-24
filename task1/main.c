@@ -19,8 +19,8 @@ void Euler(double a)
 }
 int main()
 {
-	double a;
-	scanf("%lf", &a);
+	double a=1;
+	//scanf("%lf", &a);
 	//a=exp(1)*a;
 	a=acos(-1.0)*a;
 	printf("%lf\n",a);
