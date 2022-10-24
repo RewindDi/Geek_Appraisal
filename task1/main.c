@@ -22,7 +22,7 @@ int main()
 	double a;
 	scanf("%lf", &a);
 	//a=exp(1)*a;
-	//a=acos(-1.0)*a;
+	a=acos(-1.0)*a;
 	printf("%lf\n",a);
 	printf("       x       y\n");
 	Euler(a);
