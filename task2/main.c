@@ -3,13 +3,13 @@
 #include<string.h>
 //gcc src.c -std=c99 -o src
 //查找结点i的父结点,通过递归得到结点到根的长度
-int findParent(int i,int huffman[][4],int n);
+int findParent(int i,int huffman[][5],int n);
 //根据初始权重构建哈夫曼树
-void huffmanTree(int w[],int huffman[][4],int n);
+void huffmanTree(int w[],int huffman[][5],int n,int arr_big[]);
 //寻找权重最小的两个节点
-void findMin(int ii[],int huffman[][4],int n);
+void findMin(int ii[],int huffman[][5],int n);
 //对每个叶节点进行哈夫曼编码
-void HuffmanCode(int i,int huffman[][4],int n);
+void HuffmanCode(int i,int huffman[][5],int n);
 //交换两个char型数据
 void inplace_swap(char *x,char *y);
 
@@ -46,17 +46,19 @@ int main()
     {
         if(/*自行填充代码*/arr_big[i]!=0)
         {
-            arr_small[count2++] = arr_big[i];	/*补充注释（说明作用）*///把没用的去掉
+            arr_small[count2++] = arr_big[i];
+			//printf("%d\n",arr_small[count]);	/*补充注释（说明作用）*///把没用的去掉
         }
     }
-
+	
     //定义int型二维数组，数组长度[*]为哈夫曼树的节点个数
     //c[*][0]存放的是该节点的[父节点的位序]，c[*][1]为该节点的[左子树节点的位序]
     //c[*][2]存放该节点的[右子树节点的位序]，c[*][3]为该节点的权值
-    int huffman[2 * count - 1][4];  //前n个为叶结点，后n-1个为中间结点
+    int huffman[2 * count - 1][5];  //前n个为叶结点，后n-1个为中间结点
+	
 
     //根据初始权重数组arr_small和字符个数构建huffman树
-    huffmanTree(arr_small,huffman,count);
+    huffmanTree(arr_small,huffman,count,arr_big);
 
     //计算Huffman生成树的总长度WPL
     int sum = 0;
@@ -82,28 +84,37 @@ int main()
 }
 
 //子函数——构建哈夫曼树
-void huffmanTree(int w[],int huffman[][4],int n)
+void huffmanTree(int w[],int huffman[][5],int count,int arr_big[])
 {
     //结点初始化
-    for(int i = 0; i < 2 * n - 1; i++)
+    for(int i = 0; i < 2 * count - 1; i++)
     {
         huffman[i][0] = -1;
         huffman[i][1] = -1;
         huffman[i][2] = -1;
         huffman[i][3] = -1;
+        huffman[i][4] = -1;
+    }
+    int count3 = 0;
+    for(int i = 0; i < 27; i++)
+    {
+        if(arr_big[i]!=0)
+        {
+            huffman[count3++][4] = 'A'+i;
+        }
     }
     /*补充注释（说明作用）*///初始化
-    for(int i = 0; i < n; i++)
+    for(int i = 0; i < count; i++)
     {
         huffman[i][3] = w[i];//w[i]权值
     }
     //每次抽出两个权重最小的结点进行合并，直到最终产生根结点
-    for(int i = n; i < 2 * n - 1; i++)
+    for(int i = count; i < 2 * count - 1; i++)
     {
         int i1,i2;  //权重最小的两个结点
         int ii[2];
         //找出两个权重最小的结点
-        findMin(ii,huffman,n);
+        findMin(ii,huffman,count);
         i1=ii[0];
         i2=ii[1];
         //合并i1、i2结点,更新结点信息（新生成结点的左右子结点，子节点对应的父结点，新生成结点的权重）
@@ -117,7 +128,7 @@ void huffmanTree(int w[],int huffman[][4],int n)
 
     }
 }
-void findMin(int ii[], int huffman[][4], int n)
+void findMin(int ii[], int huffman[][5], int n)
 {
     //找出第一个权重最小的结点
     int min = 9999999;
@@ -135,18 +146,18 @@ void findMin(int ii[], int huffman[][4], int n)
     }
 
     //找出第二个权重最小的结点（模仿上部分自行编写）
-
+	int min2=999999;
     /*自行填充代码*/
-	for (int i = 0; i<2*n-1;i++)
+	for (int j = 0; j<2*n-1;j++)
 	{
-		if(huffman[i][3]==-1 && huffman[i][0] ==-1)
+		if(huffman[j][3]==-1 && huffman[j][0] ==-1)
 		{
 			break;
 		}
-		if(huffman[i][3] < min && huffman[i][0] ==-1 && i!=ii[0])
+		if(huffman[j][3] < min2 && huffman[j][0] ==-1 && j!=ii[0])
 		{
-			min =huffman[i][3];
-			ii[1] =i;
+			min2 =huffman[j][3];
+			ii[1] =j;
 		}
 	}
 
@@ -154,7 +165,7 @@ void findMin(int ii[], int huffman[][4], int n)
 
 
 //子函数——查找结点i的父结点,得到结点到根的长度
-int findParent(int i,int huffman[][4],int n)
+int findParent(int i,int huffman[][5],int n)
 {
     int length = 0;
     if(huffman[i][0] == -1)     /*补充判断模块注释*///根
@@ -166,7 +177,7 @@ int findParent(int i,int huffman[][4],int n)
 }
 
 //子函数——对每个叶节点进行哈夫曼编码并进行打印
-void HuffmanCode(int i,int huffman[][4],int n)
+void HuffmanCode(int i,int huffman[][5],int n)
 {
     char code[30];  //char数组填充编码
     int current=i;  //定义当前访问的结点
@@ -177,7 +188,7 @@ void HuffmanCode(int i,int huffman[][4],int n)
     while(father != -1)
     {
         /*自行填充代码*/		//判断当前结点的父结点左子树是否为当前结点
-        if(huffman[current][1]==current)
+        if(huffman[father][1]==current)
         {
         	code[start] = '0';
 		}       /*自行填充代码*/		//子结点是父结点的左子树，编码为0
@@ -198,8 +209,7 @@ void HuffmanCode(int i,int huffman[][4],int n)
         //对调数组内部元素
         inplace_swap(&code[first], &code[last]);	/*该函数可自己重写*/
     }
-
-    printf("%c Huffman code:  %s\n",'A'+i,code);    //打印字符的huffman编码
+	printf("%c Huffman code:  %s\n",huffman[i][4],code);
 }
 
 //子函数——交换两个char型数据（使用了布尔运算），可自己另外用可读性较好的方法重新实现改函数
