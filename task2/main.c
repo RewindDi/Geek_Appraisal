@@ -212,7 +212,7 @@ void HuffmanCode(int i,int huffman[][5],int n)
 	printf("%c Huffman code:  %s\n",huffman[i][4],code);
 }
 
-//子函数——交换两个char型数据（使用了布尔运算），可自己另外用可读性较好的方法重新实现改函数
+//子函数——交换两个char型数据（使用了布尔运算），可自己另外用可读性较好的方法重新实现改函数//
 void inplace_swap(char *x,char *y)
 {
     *y = *x ^ *y;
