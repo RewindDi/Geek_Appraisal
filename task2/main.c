@@ -1,7 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-//gcc src.c -std=c99 -o src
+#include<malloc.h>
+//可以实现任意字符串的编码和译码
+
+
+/
 //查找结点i的父结点,通过递归得到结点到根的长度
 int findParent(int i,int huffman[][5],int n);
 //根据初始权重构建哈夫曼树
@@ -9,7 +13,7 @@ void huffmanTree(int w[],int huffman[][5],int n,int arr_big[]);
 //寻找权重最小的两个节点
 void findMin(int ii[],int huffman[][5],int n);
 //对每个叶节点进行哈夫曼编码
-void HuffmanCode(int i,int huffman[][5],int n);
+char* HuffmanCode(int i,int huffman[][5],int n);
 //交换两个char型数据
 void inplace_swap(char *x,char *y);
 
@@ -19,13 +23,13 @@ int main()
     char str[100];
     printf("Please Enter the string\n");
     scanf("%s", str);
-    int arr_big[27] = {0};  //各个字符的出现次数
+    int arr_big[127] = {0};  //各个字符的出现次数
     int count = 0;  //字符的总个数
     for(int i = 0; i < strlen(str); i++)    //遍历输入字符串中的所有字符
     {
-        for(int j = 0; j < 27; j++) //遍历26个大写字母
+        for(int j = 0; j < 127; j++) //遍历26个大写字母
         {
-            if(str[i] == (char)(0x41 + j))
+            if(str[i] == (char)(0x20 + j))
             {
                 arr_big[j] += 1;
                 if(arr_big[j] == 1)
@@ -42,7 +46,7 @@ int main()
     //通过arr_big对输入字符串中出现的字母次数进行统计，放入数组arr_small中
     int count2 = 0;     //字符串中出现的字符总个数
     int arr_small[count] ;  //统计输入字符串中字母的出现次数
-    for(int i = 0; i < 27; i++)
+    for(int i = 0; i < 127; i++)
     {
         if(/*自行填充代码*/arr_big[i]!=0)
         {
@@ -75,11 +79,23 @@ int main()
     printf("the tree's WPL  is  %d\n",sum);
 
     //Huffman编码
+    char* code[count];
     for(int i = 0;i < count;i++)
     {
-        HuffmanCode(i,huffman,count);
+        code[i] = HuffmanCode(i,huffman,count);
     }
-
+    
+	for(int i=0;i<strlen(str);i++)
+	{
+		for(int j=0;j<count;j++)
+		{
+			if(str[i]==huffman[j][4])
+			{
+				printf("%s",code[j]);
+				break;
+			}
+		}
+	}
     return 0;
 }
 
@@ -96,11 +112,11 @@ void huffmanTree(int w[],int huffman[][5],int count,int arr_big[])
         huffman[i][4] = -1;
     }
     int count3 = 0;
-    for(int i = 0; i < 27; i++)
+    for(int i = 0; i < 127; i++)
     {
         if(arr_big[i]!=0)
         {
-            huffman[count3++][4] = 'A'+i;
+            huffman[count3++][4] = ' '+i;
         }
     }
     /*补充注释（说明作用）*///初始化
@@ -177,9 +193,10 @@ int findParent(int i,int huffman[][5],int n)
 }
 
 //子函数——对每个叶节点进行哈夫曼编码并进行打印
-void HuffmanCode(int i,int huffman[][5],int n)
+char* HuffmanCode(int i,int huffman[][5],int n)
 {
-    char code[30];  //char数组填充编码
+    char* code;
+	code = (char*)malloc(30) ; //char数组填充编码
     int current=i;  //定义当前访问的结点
     int father = huffman[i][0]; //定义当前结点的父节点
     int start=0;    //每次编码的位置，初始为编码倒数位置
@@ -210,6 +227,7 @@ void HuffmanCode(int i,int huffman[][5],int n)
         inplace_swap(&code[first], &code[last]);	/*该函数可自己重写*/
     }
 	printf("%c Huffman code:  %s\n",huffman[i][4],code);
+	return code;
 }
 
 //子函数——交换两个char型数据（使用了布尔运算），可自己另外用可读性较好的方法重新实现改函数//
